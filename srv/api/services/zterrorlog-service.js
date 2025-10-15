@@ -15,7 +15,7 @@ const GetAllErrors = async () => {
 
 const GetOneError = async (id) => {
   try {
-    const error = await zterrorlog.findOne({ _id: id });
+    const error = await zterrorlog.findOne(id);
     if (error) {
       return JSON.stringify({
         status: 200,
@@ -65,7 +65,7 @@ const UpdateOneError = async (error) => {
 
 const DeleteOneError = async (id) => {
   try {
-    const deletedError = await zterrorlog.findOneAndDelete({ _id: id });
+    const deletedError = await zterrorlog.findOneAndDelete(id);
     if (deletedError) {
       return JSON.stringify({
         status: 200,
