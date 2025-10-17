@@ -33,7 +33,11 @@ class ErrorClass extends cds.ApplicationService {
     // });
     this.on('crud', async (req) => {
       const queryParams = req.req.query;
-      return await crudErrores(queryParams);
+      const {body} = req.req;
+      console.log(body)
+      // req._.res.statusCode = 201;
+      const result  = await crudErrores(queryParams);
+      return result
     });
   }
 }

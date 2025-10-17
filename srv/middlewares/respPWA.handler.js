@@ -7,7 +7,7 @@ const BITACORA = () => {
     // process: '',
     // messageUSR: '',
     // messageDEV: '',
-    // countData: 0,
+    countData: 0,
     // countDataReq: 0,
     // countDataRes: 0,
     // countMsgUSR: 0,

@@ -5,20 +5,23 @@ const { OK, FAIL, BITACORA, DATA, AddMSG } = respPWA;
 
 export const crudErrores = async (params) => {
   let bitacora = BITACORA();
-  // let data = DATA();
+  let data = DATA();
 
   const { queryType, LoggedUser, body, id } = params;
   let result;
   try {
     switch (queryType) {
       case 'getAll':
+        //OBTENER LA DATA CON EL CONTROLADOR PARA ERRORES
         result = await zterrorlogService.GetAllErrors();
-        result = JSON.parse(result);
+        result = JSON.parse(result); //PARSEAR RESULTADO A JSON
+
+        //ASIGNAR LOS CAMPOS Y VALORES A BITACORA
         bitacora.data.push(result.data);
         bitacora.countData = result.results;
         bitacora.success = true;
         bitacora.status = 200;
-        bitacora.loggedUser = "RRA";
+        bitacora.loggedUser = LoggedUser;
         bitacora.finalRes = true;
         bitacora.dbServer = 'Mongodb'
         break;
@@ -35,20 +38,18 @@ export const crudErrores = async (params) => {
     return OK(bitacora);
   } catch (errorBita) {
     console.log(errorBita)
-    // if (!errorBita?.finalRes) {
-    //   data.status = data.status || 500;
-    //   data.messageDEV = data.messageDEV || errorBita.message;
-    //   data.messageUSR =
-    //     data.messageUSR ||
-    //     '<<ERROR CATCH>> La extracción de la información de AZURE <<NO>> tuvo éxito';
-    //   data.dataRes = data.dataRes || errorBita;
-    //   errorBita = AddMSG(bitacora, data, 'FAIL');
-    // }
+    if (!errorBita?.finalRes) {
+      data.status = data.status || 500;
+      data.messageDEV = data.messageDEV || errorBita.message;
+      data.messageUSR =
+        data.messageUSR ||
+        '<<ERROR CATCH>> La extracción de la información de AZURE <<NO>> tuvo éxito';
+      data.dataRes = data.dataRes || errorBita;
+      errorBita = AddMSG(bitacora, data, 'FAIL');
+    }
 
-    // console.log(`<<Message USR>> ${errorBita.messageUSR}`);
-    // console.log(`<<Message DEV>> ${errorBita.messageDEV}`);
-
-// console.log(bitacora.data)
+    console.log(`<<Message USR>> ${errorBita.messageUSR}`);
+    console.log(`<<Message DEV>> ${errorBita.messageDEV}`);
     return FAIL(errorBita);
   }
 };
