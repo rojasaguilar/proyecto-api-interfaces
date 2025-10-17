@@ -12,7 +12,7 @@ const BITACORA = () => {
     // countDataRes: 0,
     // countMsgUSR: 0,
     // countMsgDEV: 0,
-    // dbServer: '',
+    dbServer: '',
     // server: '',
     data: [],
     loggedUser: '',
