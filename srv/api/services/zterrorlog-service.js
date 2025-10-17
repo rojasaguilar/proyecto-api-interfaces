@@ -15,14 +15,14 @@ const GetAllErrors = async () => {
 
 const GetOneError = async (id) => {
   try {
-    const error = await zterrorlog.findOne(id);
+    const error = await zterrorlog.findOne({ _id: id });
     if (error) {
       return JSON.stringify({
         status: 200,
         data: error,
       });
     }
-    const notFoundError = new Error(`Error with ID ${_id} not found`);
+    const notFoundError = new Error(`Error with ID ${id} not found`);
     notFoundError.code = 404;
     throw notFoundError;
   } catch (error) {
