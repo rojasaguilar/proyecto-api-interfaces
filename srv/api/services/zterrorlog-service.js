@@ -33,7 +33,6 @@ const GetOneError = async (id) => {
 const InsertOneError = async (error) => {
   try {
     const newError = await zterrorlog.insertOne(error);
-    console.log(newError);
     return JSON.stringify({
       status: 201,
       message: 'Error inserted sucessfully',

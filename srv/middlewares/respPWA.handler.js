@@ -142,24 +142,26 @@ const OK = (bitacora) => {
 };
 
 const FAIL = (bitacora) => {
-  return {
-    success: bitacora.success || false,
-    status: bitacora.status || 500,
-    process: bitacora.process || 'No Especificado',
-    messageUSR: bitacora.messageUSR || 'No Especificado',
-    messageDEV: bitacora.messageDEV || 'No Especificado',
-    countData: bitacora.countData || 0,
-    countDataReq: bitacora.countDataReq || 0,
-    countDataRes: bitacora.countDataRes || 0,
-    countMsgUSR: bitacora.countMsgUSR || 0,
-    countMsgDEV: bitacora.countMsgDEV || 0,
-    dbServer: bitacora.dbServer || 'Default',
-    server: bitacora.server || 'Default',
-    data: bitacora.data || [],
-    session: bitacora.session || 'No Especificado',
-    loggedUser: bitacora.loggedUser || 'No Especificado',
-    finalRes: bitacora.finalRes || false,
-  };
+  // return {
+  //   success: bitacora.success || false,
+  //   status: bitacora.status || 500,
+  //   process: bitacora.process || 'No Especificado',
+  //   messageUSR: bitacora.messageUSR || 'No Especificado',
+  //   messageDEV: bitacora.messageDEV || 'No Especificado',
+  //   countData: bitacora.countData || 0,
+  //   countDataReq: bitacora.countDataReq || 0,
+  //   countDataRes: bitacora.countDataRes || 0,
+  //   countMsgUSR: bitacora.countMsgUSR || 0,
+  //   countMsgDEV: bitacora.countMsgDEV || 0,
+  //   dbServer: bitacora.dbServer || 'Default',
+  //   server: bitacora.server || 'Default',
+  //   data: bitacora.data || [],
+  //   session: bitacora.session || 'No Especificado',
+  //   loggedUser: bitacora.loggedUser || 'No Especificado',
+  //   finalRes: bitacora.finalRes || false,
+  // };
+
+  return bitacora
 };
 
 const TRANSOPTIONS = () => {
