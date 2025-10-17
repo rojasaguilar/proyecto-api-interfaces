@@ -1,20 +1,27 @@
-import zterrorlogService from './zterrorlog-service.js';
 import respPWA from './../../middlewares/respPWA.handler.js';
-
-import { whatTypeVarIs } from '../../helpers/variables.js';
 import { functionsDic } from '../../middlewares/queryDic.js';
 
 const { OK, FAIL, BITACORA, DATA, AddMSG } = respPWA;
 
 export const crudErrores = async (params, body) => {
   let bitacora = BITACORA();
-  let data = DATA();
 
-  const { queryType, LoggedUser, id, dbServer } = params;
+  const { queryType, LoggedUser, dbServer } = params;
 
-  let result;
+  // let result;
   try {
-functionsDic[queryType](params,bitacora)
+    if (!functionsDic[queryType]) {
+      const err = new Error(`Unsupported queryType: ${queryType}`);
+      err.statusCode = 402;
+      throw err;
+    }
+    if (!LoggedUser || !dbServer || !queryType) {
+      const err = new Error('No queries proporcionados');
+      err.statusCode = 512;
+      throw err;
+    }
+
+    bitacora = await functionsDic[queryType](params, bitacora);
     // switch (queryType) {
     //   case 'getAll':
     //     //OBTENER LA DATA CON EL CONTROLADOR PARA ERRORES
@@ -84,19 +91,20 @@ functionsDic[queryType](params,bitacora)
 
     return OK(bitacora);
   } catch (errorBita) {
-    console.log(errorBita)
-    if (!errorBita?.finalRes) {
-      data.status = data.status || 500;
-      data.messageDEV = errorBita.errorBita;
-      data.messageUSR =
-        data.messageUSR ||
-        '<<ERROR CATCH>> La extracción de la información de AZURE <<NO>> tuvo éxito';
-      data.dataRes = data.dataRes || errorBita;
-      errorBita = AddMSG(bitacora, data, 'FAIL');
-    }
-
-    // console.log(`<<Message USR>> ${errorBita.messageUSR}`);
-    // console.log(`<<Message DEV>> ${errorBita.messageDEV}`);
-    return FAIL(errorBita);
+    console.log(`error vato: ${errorBita.message}`);
+    bitacora.success = false;
+    bitacora.status = errorBita.statusCode;
+    bitacora.messageUSR = errorBita.message; // process: '';
+    bitacora.messageDEV = errorBita.message;
+    bitacora.countData = 0;
+    // bitacora.// countDataReq: 0;
+    // bitacora.// countDataRes: 0;
+    // bitacora.// countMsgUSR: 0;
+    // bitacora.// countMsgDEV: 0;
+    bitacora.dbServer = dbServer || 'not provided';
+    // bitacora.data: [];
+    bitacora.loggedUser = LoggedUser || 'not provided'; // server: '';
+    bitacora.finalRes = true;
+    return FAIL(bitacora);
   }
 };
