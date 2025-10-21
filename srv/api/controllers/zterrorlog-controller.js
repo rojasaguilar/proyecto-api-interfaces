@@ -1,5 +1,4 @@
 import cds from '@sap/cds';
-import zterrorlogService from '../services/zterrorlog-service.js';
 import { crudErrores } from '../services/crud-service.js';
 
 class ErrorClass extends cds.ApplicationService {
