@@ -80,22 +80,27 @@ const addFunciton = async (params, bitacora, body) => {
     }
     let result;
     if (whatTypeVarIs(body.data) === 'isArray') {
-      data.map(async (error) => {
-        result = await zterrorlogService.InsertOneError(error);
-        result = JSON.parse(result);
-        //ASIGNAR LOS CAMPOS Y VALORES A BITACORA
-        bitacora.data.push(result.data);
-        bitacora.countData = result.results;
-        bitacora.success = true;
-        bitacora.status = 200;
-        bitacora.loggedUser = LoggedUser;
-        bitacora.finalRes = true;
-        bitacora.dbServer = dbServer;
-        bitacora.messageUSR = 'Errores insertados correctamente';
-        bitacora.messageDEV = 'Errores insertados correctamente';
-        return bitacora;
-      });
+      const results = await Promise.all(
+        body.data.map(async (error) => {
+          console.log(`error aquí in ${JSON.stringify(error)}`);
+          const insertResult = await zterrorlogService.InsertOneError(error);
+          return JSON.parse(insertResult).data;
+        })
+      );
+
+      bitacora.data = results;
+      bitacora.countData = results.length;
+      bitacora.success = true;
+      bitacora.status = 200;
+      bitacora.loggedUser = LoggedUser;
+      bitacora.finalRes = true;
+      bitacora.dbServer = dbServer;
+      bitacora.messageUSR = 'Errores insertados correctamente';
+      bitacora.messageDEV = 'Errores insertados correctamente';
+
+      return bitacora;
     }
+
     const error = body.data;
     result = await zterrorlogService.InsertOneError(error);
     result = JSON.parse(result);
