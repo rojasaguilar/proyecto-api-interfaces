@@ -8,32 +8,50 @@ export const crudErrores = async (params, body) => {
 
   const { queryType, LoggedUser, dbServer } = params;
 
-  try {
-    if (!functionsDic[queryType]) {
-      const err = new Error(`Unsupported queryType: ${queryType}`);
-      err.statusCode = 402;
-      throw err;
-    }
-    if (!LoggedUser || !dbServer || !queryType) {
-      const err = new Error('No queries proporcionados');
-      err.statusCode = 512;
-      throw err;
-    }
+  if (!functionsDic[queryType]) {
+    const err = new Error(`Unsupported queryType: ${queryType}`);
+    err.statusCode = 402;
 
-    bitacora = await functionsDic[queryType](params, bitacora, body);
-
-    return OK(bitacora);
-  } catch (errorBita) {
-    console.log(`error vato: ${errorBita.message}`);
     bitacora.success = false;
-    bitacora.status = errorBita.statusCode;
-    bitacora.messageUSR = errorBita.message; // process: '';
-    bitacora.messageDEV = errorBita.message;
+    bitacora.status = err.statusCode;
+    bitacora.messageUSR = err.message; // process: '';
+    bitacora.messageDEV = err.message;
     bitacora.countData = 0;
     bitacora.dbServer = dbServer || 'not provided';
-    // bitacora.data: [];
+
     bitacora.loggedUser = LoggedUser || 'not provided'; // server: '';
     bitacora.finalRes = true;
     return FAIL(bitacora);
   }
+  const queryChecks = {
+    LoggedUser,
+    dbServer,
+    queryType,
+  };
+
+  const noTypes = Object.entries(queryChecks)
+    .filter(([key, value]) => !value)
+    .map(([key]) => key);
+
+  if (noTypes.length > 0) {
+    bitacora.success = false;
+    bitacora.status = 512;
+    bitacora.messageUSR = `NO se encontraron los queries: ${noTypes.join(
+      ', '
+    )}`;
+    bitacora.messageDEV = `NO se encontraron los queries: ${noTypes.join(
+      ', '
+    )}`;
+    bitacora.countData = 0;
+    bitacora.dbServer =
+      dbServer || `NO se encontraron los queries: ${noTypes.join(', ')}`;
+    bitacora.loggedUser = LoggedUser || 'not provided';
+    bitacora.finalRes = true;
+
+    return FAIL(bitacora);
+  }
+
+  bitacora = await functionsDic[queryType](params, bitacora, body);
+
+  return OK(bitacora);
 };

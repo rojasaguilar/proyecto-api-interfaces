@@ -82,7 +82,6 @@ const addFunciton = async (params, bitacora, body) => {
     if (whatTypeVarIs(body.data) === 'isArray') {
       const results = await Promise.all(
         body.data.map(async (error) => {
-          console.log(`error aquí in ${JSON.stringify(error)}`);
           const insertResult = await zterrorlogService.InsertOneError(error);
           return JSON.parse(insertResult).data;
         })
@@ -91,7 +90,7 @@ const addFunciton = async (params, bitacora, body) => {
       bitacora.data = results;
       bitacora.countData = results.length;
       bitacora.success = true;
-      bitacora.status = 200;
+      bitacora.status = 201;
       bitacora.loggedUser = LoggedUser;
       bitacora.finalRes = true;
       bitacora.dbServer = dbServer;
