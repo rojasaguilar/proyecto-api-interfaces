@@ -36,7 +36,7 @@ const getOneFunction = async (params, bitacora) => {
 
   try {
     if (!id) {
-      throw new Error('Missing ID parameter');
+      throw { code: 400, msg: 'Debes de proporcionar un _id' };
     }
 
     let result = await zterrorlogService.GetOneError(id);
@@ -50,15 +50,14 @@ const getOneFunction = async (params, bitacora) => {
     bitacora.loggedUser = LoggedUser;
     bitacora.finalRes = true;
     bitacora.dbServer = dbServer;
-    bitacora.messageUSR =
-      'No se pudieron extraer los errores, intenta mas tarde';
+    bitacora.messageUSR = 'Data succesfully recovered';
     bitacora.messageDEV = 'Data succesfully recovered';
     return bitacora;
   } catch (errorBita) {
     //ASIGNAR LOS CAMPOS Y VALORES A BITACORA error
     bitacora.countData = 0;
     bitacora.success = false;
-    bitacora.status = 525;
+    bitacora.status = errorBita.code;
     bitacora.loggedUser = LoggedUser;
     bitacora.finalRes = true;
     bitacora.dbServer = dbServer;
@@ -70,9 +69,7 @@ const getOneFunction = async (params, bitacora) => {
 
 const addFunciton = async (params, bitacora, body) => {
   const { LoggedUser, dbServer, id } = params;
-  const data = body.data;
-
-  console.log(`datos: ${data}`);
+  const { data } = body;
 
   try {
     if (!data) {
@@ -127,8 +124,77 @@ const addFunciton = async (params, bitacora, body) => {
   }
 };
 
+const updateFunction = async (params, bitacora, body) => {
+  console.log(params);
+  const { LoggedUser, dbServer } = params;
+  const { data } = body;
+  try {
+    if (!data) {
+      throw new Error('Missing data');
+    }
+
+    let result;
+    if (whatTypeVarIs(data) === 'isArray') {
+      result = await Promise.all(
+        data.map(async (error) => {
+          const results = await zterrorlogService.UpdateOneError(error);
+          return JSON.parse(results).data;
+        })
+      );
+
+      if (result) {
+        result = JSON.parse(result);
+        //ASIGNAR LOS CAMPOS Y VALORES A BITACORA
+        bitacora.data.push(result.data);
+        bitacora.countData = result.length;
+        bitacora.success = true;
+        bitacora.status = 200;
+        bitacora.loggedUser = LoggedUser;
+        bitacora.finalRes = true;
+        bitacora.dbServer = dbServer;
+        bitacora.messageUSR = 'Errores actualizados correctamente';
+        bitacora.messageDEV = 'Errores actualizados correctamente';
+        return bitacora;
+      }
+    }
+
+    const { _id } = data;
+
+    if (!_id) {
+      throw { code: 400, msg: 'Debes de proporcionar un _id' };
+    }
+
+    result = await zterrorlogService.UpdateOneError(data);
+    result = JSON.parse(result);
+    if (result) {
+      //ASIGNAR LOS CAMPOS Y VALORES A BITACORA
+      bitacora.data.push(result.data);
+      bitacora.countData = 1;
+      bitacora.success = true;
+      bitacora.status = 200;
+      bitacora.loggedUser = LoggedUser;
+      bitacora.finalRes = true;
+      bitacora.dbServer = dbServer;
+      bitacora.messageUSR = 'Error actualizado correctamente';
+      bitacora.messageDEV = 'Error actualizado correctamente';
+      return bitacora;
+    }
+  } catch (error) {
+    bitacora.countData = 1;
+    bitacora.success = false;
+    bitacora.status = error.code;
+    bitacora.loggedUser = LoggedUser;
+    bitacora.finalRes = true;
+    bitacora.dbServer = dbServer;
+    bitacora.messageUSR = 'Error no correctamente';
+    bitacora.messageDEV = error;
+    return bitacora;
+  }
+};
+
 export const functionsDic = {
   getAll: (params, bitacora) => getAllFunction(params, bitacora),
   getOne: (params, bitacora) => getOneFunction(params, bitacora),
   add: (params, bitacora, body) => addFunciton(params, bitacora, body),
+  update: (params, bitacora, body) => updateFunction(params, bitacora, body),
 };

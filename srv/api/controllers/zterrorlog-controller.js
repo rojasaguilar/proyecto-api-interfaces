@@ -6,7 +6,9 @@ class ErrorClass extends cds.ApplicationService {
     this.on('crud', async (req) => {
       const queryParams = req.req.query;
       const { body } = req.req;
+
       const result = await crudErrores(queryParams, body);
+      
       req.http.res.status(result.status);
       return req.http.res.send(result);
     });
