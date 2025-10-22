@@ -52,6 +52,8 @@ export const crudErrores = async (params, body) => {
   }
 
   bitacora = await functionsDic[queryType](params, bitacora, body);
-
-  return OK(bitacora);
+  if (bitacora.success) {
+    return OK(bitacora);
+  }
+  return FAIL(bitacora);
 };
