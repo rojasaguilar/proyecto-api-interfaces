@@ -1,17 +1,27 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import Tabs from "../components/Tabs";
-import "../styles/errordetail.css";
+import React from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
+import Tabs from '../components/Tabs';
+import '../styles/errordetail.css';
+import TabErrorSummary from '../components/TabErrorSummary';
+import TabSolution from '../components/TabSolution';
+import TabAIsolution from '../components/TabAIsolution';
 
 const ErrorDetail = () => {
   const { id } = useParams();
+  const { state } = useLocation();
 
   const tabs = [
-    { label: "Error Summary", content: <p>Summary info for Task ID #{id}...</p> },
-    { label: "Solution", content: <p>Suggested fix or user-provided solution.</p> },
-    { label: "AI Solution", content: <p>AI-generated assistance (future).</p> },
+    {
+      label: 'Error Summary',
+      content: <TabErrorSummary error={state} />,
+    },
+    {
+      label: 'Solution',
+      content: <TabSolution solution={state.SOLUTION} />,
+    },
+    { label: 'AI Solution', content: <TabAIsolution aiResponse={state.AI_RESPONSE}/> },
   ];
 
   return (

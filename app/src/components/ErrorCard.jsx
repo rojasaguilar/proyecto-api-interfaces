@@ -7,7 +7,7 @@ const ErrorCard = ({ error }) => {
     <div className="error-item">
       <div className="dot"></div>
       <div className="error-card">
-        <Link to={`/errors/${error._id}`} className="error-link">
+        <Link to={`/errors/${error._id}`} className="error-link" state={error}>
           <div className="error-card-header">
             <img
               src={`https://i.pravatar.cc/50?u=${error._id}`}

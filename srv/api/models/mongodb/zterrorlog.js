@@ -31,6 +31,9 @@ const zterrorlogSchema = new mongoose.Schema(
       maxlength: 5000,
       default: null,
     },
+    SOLUTION: {
+      type: String,
+    },
     STATUS: {
       type: String,
       enum: ['NEW', 'IN_PROGRESS', 'RESOLVED', 'IGNORED'],
